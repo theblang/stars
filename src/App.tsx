@@ -1,20 +1,55 @@
+import * as BABYLON from 'babylonjs';
 import * as React from 'react';
 import './App.css';
+import { ISceneEventArgs, Scene } from './Scene';
 
-import logo from './logo.svg';
+class App extends React.Component<{}, {}> {
+    public onSceneMount = (e: ISceneEventArgs) => {
+        const { canvas, scene, engine } = e;
 
-class App extends React.Component {
+        // This creates and positions a free camera (non-mesh)
+        const camera = new BABYLON.FreeCamera(
+            'camera1',
+            new BABYLON.Vector3(0, 5, -10),
+            scene
+        );
+
+        // This targets the camera to scene origin
+        camera.setTarget(BABYLON.Vector3.Zero());
+
+        // This attaches the camera to the canvas
+        camera.attachControl(canvas, true);
+
+        // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
+        const light = new BABYLON.HemisphericLight(
+            'light1',
+            new BABYLON.Vector3(0, 1, 0),
+            scene
+        );
+
+        // Default intensity is 1. Let's dim the light a small amount
+        light.intensity = 0.7;
+
+        // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+        const sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene);
+
+        // Move the sphere upward 1/2 its height
+        sphere.position.y = 1;
+
+        // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+        BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene);
+
+        engine.runRenderLoop(() => {
+            if (scene) {
+                scene.render();
+            }
+        });
+    };
+
     public render() {
         return (
             <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h1 className="App-title">Welcome to React</h1>
-                </header>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.tsx</code> and save to
-                    reload.
-                </p>
+                <Scene onSceneMount={this.onSceneMount} />
             </div>
         );
     }
