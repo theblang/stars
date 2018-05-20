@@ -3,5 +3,8 @@
     "linterOptions": {
         "exclude": ["config/**/*.js", "node_modules/**/*.ts"]
     },
-    "defaultSeverity": "warning"
+    "defaultSeverity": "warning",
+    "rules": {
+        "object-literal-sort-keys": false
+    }
 }
