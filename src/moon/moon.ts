@@ -1,8 +1,6 @@
-import { IPosition, Position } from './position';
-
 export interface IMoon {
     name: string;
-    position: IPosition;
+    position: BABYLON.Vector3;
     radius: number;
     distanceFromPlanet: number;
 }
@@ -10,7 +8,7 @@ export interface IMoon {
 export class Moon {
     constructor(
         public name: string,
-        public position: Position,
+        public position: BABYLON.Vector3,
         public radius: number,
         public distanceFromPlanet: number
     ) {}

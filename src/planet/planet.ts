@@ -1,9 +1,8 @@
-import { IMoon, Moon } from './moon';
-import { IPosition, Position } from './position';
+import { IMoon, Moon } from '../moon/moon';
 
 export interface IPlanet {
     name: string;
-    position: IPosition;
+    position: BABYLON.Vector3;
     radius: number;
     moons: IMoon[];
     distanceFromSun: number;
@@ -12,7 +11,7 @@ export interface IPlanet {
 export class Planet {
     constructor(
         public name: string,
-        public position: Position,
+        public position: BABYLON.Vector3,
         public radius: number,
         public moons: Moon[],
         public distanceFromSun: number

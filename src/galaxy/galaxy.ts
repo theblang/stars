@@ -1,5 +1,5 @@
 import { ISceneEventArgs } from '../Scene';
-import { ISystem, System } from './system';
+import { ISystem, System } from '../system/system';
 
 export interface IGalaxy {
     name: string;
@@ -9,7 +9,10 @@ export interface IGalaxy {
 export class Galaxy {
     constructor(public name: string, public systems: System[]) {}
 
-    public onSceneMount = (e: ISceneEventArgs) => {
+    public onSceneMount = (
+        e: ISceneEventArgs,
+        setMenuContent: (content: JSX.Element) => void
+    ) => {
         const { canvas, scene, engine } = e;
 
         // This creates and positions a free camera (non-mesh)
@@ -36,8 +39,20 @@ export class Galaxy {
         // light.intensity = 0.7;
 
         // Draw systems
+        const onLeftPickSystem = (
+            pickedSystem: System,
+            content: JSX.Element
+        ) => {
+            setMenuContent(content);
+            for (const system of this.systems) {
+                if (system.focused && system !== pickedSystem) {
+                    system.unfocus();
+                }
+                pickedSystem.focus();
+            }
+        };
         for (const system of this.systems) {
-            system.draw(scene);
+            system.draw(scene, onLeftPickSystem);
         }
 
         engine.runRenderLoop(() => {

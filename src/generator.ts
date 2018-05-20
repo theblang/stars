@@ -1,8 +1,8 @@
-import { Galaxy } from './models/galaxy';
-import { Moon } from './models/moon';
-import { Planet } from './models/planet';
-import { Position } from './models/position';
-import { System } from './models/system';
+import { Galaxy } from './galaxy/galaxy';
+import { Moon } from './moon/moon';
+import { Planet } from './planet/planet';
+import { System } from './system/system';
+import { Vector3 } from 'babylonjs';
 
 export default class Generator {
     public static generateGalaxy(): Galaxy {
@@ -74,7 +74,7 @@ export default class Generator {
                 const planetX = Math.cos(planetAngle) * planetDistanceFromSun;
                 const planetY = 0;
                 const planetZ = Math.sin(planetAngle) * planetDistanceFromSun;
-                const planetPosition = new Position(planetX, planetY, planetZ);
+                const planetPosition = new Vector3(planetX, planetY, planetZ);
 
                 // Generate random radius
                 const planetRadius =
@@ -103,7 +103,7 @@ export default class Generator {
                     const moonX = Math.cos(moonAngle) * moonDistanceFromPlanet;
                     const moonY = 0;
                     const moonZ = Math.sin(moonAngle) * moonDistanceFromPlanet;
-                    const moonPosition = new Position(
+                    const moonPosition = new Vector3(
                         moonX + planetX,
                         moonY + planetY,
                         moonZ + planetZ
@@ -140,7 +140,7 @@ export default class Generator {
             systems.push(
                 new System(
                     systemName,
-                    new Position(systemX, systemY, systemZ),
+                    new BABYLON.Vector3(systemX, systemY, systemZ),
                     planets
                 )
             );
