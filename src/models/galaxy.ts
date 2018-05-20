@@ -1,11 +1,14 @@
-import * as BABYLON from 'babylonjs';
-import * as React from 'react';
-import './App.css';
-import Generator from './generator';
-import { Galaxy } from './models/galaxy';
-import { ISceneEventArgs, Scene } from './Scene';
+import { ISceneEventArgs } from '../Scene';
+import { ISystem, System } from './system';
 
-class App extends React.Component<{}, {}> {
+export interface IGalaxy {
+    name: string;
+    systems: ISystem[];
+}
+
+export class Galaxy {
+    constructor(public name: string, public systems: System[]) {}
+
     public onSceneMount = (e: ISceneEventArgs) => {
         const { canvas, scene, engine } = e;
 
@@ -16,6 +19,7 @@ class App extends React.Component<{}, {}> {
             scene
         );
 
+        // this function is the best
         // This targets the camera to scene origin
         camera.setTarget(BABYLON.Vector3.Zero());
 
@@ -47,16 +51,4 @@ class App extends React.Component<{}, {}> {
             }
         });
     };
-
-    public render() {
-        const galaxy: Galaxy = Generator.generateGalaxy();
-
-        return (
-            <div className="App">
-                <Scene onSceneMount={galaxy.onSceneMount} />
-            </div>
-        );
-    }
 }
-
-export default App;
