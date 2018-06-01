@@ -1,12 +1,12 @@
 import * as React from 'react';
 import './MenuContainer.css';
 
-export interface IMenuProps {
-    content: JSX.Element;
+export interface MenuProps {
+    menuContent: JSX.Element;
 }
 
-export class MenuContainer extends React.Component<IMenuProps, {}> {
+export class MenuContainer extends React.Component<MenuProps, {}> {
     public render() {
-        return <div className="MenuContainer">{this.props.content}</div>;
+        return <div className="MenuContainer">{this.props.menuContent}</div>;
     }
 }

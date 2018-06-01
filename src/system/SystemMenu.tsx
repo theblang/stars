@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { ISystem } from './system';
+import System from './System';
 
-export interface ISystemMenuProps {
-    system: ISystem;
+export interface SystemMenuProps {
+    system: System;
 }
 
-export class SystemMenu extends React.Component<ISystemMenuProps, {}> {
+export class SystemMenu extends React.Component<SystemMenuProps, {}> {
     public render() {
         return (
-            <div className="SystemMenu">
+            <div>
                 <p>Name: {this.props.system.name}</p>
                 <p>
                     This is system {this.props.system.name}. It has{' '}

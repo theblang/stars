@@ -1,15 +1,28 @@
-export interface IMoon {
-    name: string;
-    position: BABYLON.Vector3;
-    radius: number;
-    distanceFromPlanet: number;
-}
+import Position from '../common/Position';
 
-export class Moon {
-    constructor(
-        public name: string,
-        public position: BABYLON.Vector3,
-        public radius: number,
-        public distanceFromPlanet: number
-    ) {}
+export default class Moon {
+    public name: string;
+    public position: Position;
+    public radius: number;
+    public distanceFromPlanet: number;
+
+    constructor(moonJson: any) {
+        this.name = moonJson.name;
+        this.position = new Position(moonJson.position);
+        this.radius = moonJson.radius;
+        this.distanceFromPlanet = moonJson.distanceFromPlanet;
+    }
+
+    public toJSON() {
+        return {
+            name: this.name,
+            position: {
+                x: this.position.x,
+                y: this.position.y,
+                z: this.position.z
+            },
+            radius: this.radius,
+            distanceFromPlanet: this.distanceFromPlanet
+        };
+    }
 }

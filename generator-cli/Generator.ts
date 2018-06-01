@@ -1,8 +1,8 @@
-import { Galaxy } from './galaxy/galaxy';
-import { Moon } from './moon/moon';
-import { Planet } from './planet/planet';
-import { System } from './system/system';
-import { Vector3 } from 'babylonjs';
+import Galaxy from '../src/galaxy/Galaxy';
+import System from '../src/system/System';
+import Planet from '../src/planet/Planet';
+import Moon from '../src/moon/Moon';
+import Position from '../src/common/Position';
 
 export default class Generator {
     public static generateGalaxy(): Galaxy {
@@ -74,7 +74,11 @@ export default class Generator {
                 const planetX = Math.cos(planetAngle) * planetDistanceFromSun;
                 const planetY = 0;
                 const planetZ = Math.sin(planetAngle) * planetDistanceFromSun;
-                const planetPosition = new Vector3(planetX, planetY, planetZ);
+                const planetPosition = new Position({
+                    x: planetX,
+                    y: planetY,
+                    z: planetZ
+                });
 
                 // Generate random radius
                 const planetRadius =
@@ -103,11 +107,11 @@ export default class Generator {
                     const moonX = Math.cos(moonAngle) * moonDistanceFromPlanet;
                     const moonY = 0;
                     const moonZ = Math.sin(moonAngle) * moonDistanceFromPlanet;
-                    const moonPosition = new Vector3(
-                        moonX + planetX,
-                        moonY + planetY,
-                        moonZ + planetZ
-                    );
+                    const moonPosition = new Position({
+                        x: moonX + planetX,
+                        y: moonY + planetY,
+                        z: moonZ + planetZ
+                    });
 
                     // Generate random radius
                     const moonRadius =
@@ -117,37 +121,44 @@ export default class Generator {
                         ) + moonRadiusMin;
 
                     moons.push(
-                        new Moon(
-                            moonName,
-                            moonPosition,
-                            moonRadius,
-                            moonDistanceFromPlanet
-                        )
+                        new Moon({
+                            name: moonName,
+                            position: moonPosition,
+                            radius: moonRadius,
+                            distanceFromPlanet: moonDistanceFromPlanet
+                        })
                     );
                 }
 
                 planets.push(
-                    new Planet(
-                        planetName,
-                        planetPosition,
-                        planetRadius,
+                    new Planet({
+                        name: planetName,
+                        position: planetPosition,
+                        radius: planetRadius,
                         moons,
-                        planetDistanceFromSun
-                    )
+                        distanceFromSun: planetDistanceFromSun
+                    })
                 );
             }
 
             systems.push(
-                new System(
-                    systemName,
-                    new BABYLON.Vector3(systemX, systemY, systemZ),
+                new System({
+                    name: systemName,
+                    position: new Position({
+                        x: systemX,
+                        y: systemY,
+                        z: systemZ
+                    }),
                     planets
-                )
+                })
             );
         }
 
         const galaxyName = `g${Date.now()}`;
-        return new Galaxy(galaxyName, systems);
+        return new Galaxy({
+            name: galaxyName,
+            systems
+        });
     }
 
     public static getRandomIntInclusive(min = 0, max: number) {

@@ -1,39 +1,56 @@
 import * as React from 'react';
 import './App.css';
-import Generator from './generator';
-import { Galaxy } from './galaxy/galaxy';
-import { Scene, ISceneEventArgs } from './Scene';
-import { MenuContainer } from './MenuContainer';
+import { SceneModel } from './common/SceneModel';
+import { GalaxySceneModel } from './galaxy/GalaxySceneModel';
+import { Scene } from './Scene';
+import Galaxy from './galaxy/Galaxy';
+import firestore from './firestore';
 
-interface IAppState {
-    content: JSX.Element;
+export interface AppState {
+    sceneModel: SceneModel | undefined;
 }
 
-class App extends React.Component<{}, IAppState> {
+export default class App extends React.Component<{}, AppState> {
+    public menuContent: JSX.Element;
+
     constructor(props: any) {
         super(props);
         this.state = {
-            content: <div />
+            sceneModel: undefined
         };
     }
 
-    public onSceneMount = (e: ISceneEventArgs) => {
-        const galaxy: Galaxy = Generator.generateGalaxy();
-        galaxy.onSceneMount(e, this.setMenuContent);
-    };
+    public shouldComponentUpdate(
+        nextProps: Readonly<{}>,
+        nextState: Readonly<AppState>
+    ) {
+        return nextState.sceneModel !== this.state.sceneModel;
+    }
 
-    public setMenuContent = (content: JSX.Element) => {
-        this.setState({ content });
-    };
+    public async componentDidMount() {
+        firestore.settings({ timestampsInSnapshots: true });
+
+        let querySnapshot;
+        try {
+            querySnapshot = await firestore.collection('galaxies').get();
+            const galaxyRef = querySnapshot.docs[0].ref;
+            const galaxyDoc = await galaxyRef.get();
+            const galaxy = new Galaxy(galaxyDoc.data());
+            const galaxySceneModel = new GalaxySceneModel(
+                galaxy,
+                this.menuContent
+            );
+            this.setState({ sceneModel: galaxySceneModel });
+        } catch {
+            // TODO: Show error
+        }
+    }
 
     public render() {
         return (
             <div className="App">
-                <Scene onSceneMount={this.onSceneMount} />
-                <MenuContainer content={this.state.content} />
+                <Scene sceneModel={this.state.sceneModel} />
             </div>
         );
     }
 }
-
-export default App;

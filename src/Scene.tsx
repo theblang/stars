@@ -1,33 +1,44 @@
 import * as BABYLON from 'babylonjs';
 import * as React from 'react';
 import './Scene.css';
+import { SceneModel } from './common/SceneModel';
+import { MenuContainer } from './MenuContainer';
 
-export interface ISceneEventArgs {
+export interface SceneEventArgs {
     canvas: HTMLCanvasElement;
     engine: BABYLON.Engine;
     scene: BABYLON.Scene;
 }
 
-export interface ISceneProps {
+export interface SceneProps {
+    sceneModel: SceneModel | undefined;
     engineOptions?: BABYLON.EngineOptions;
     adaptToDeviceRatio?: boolean;
-    onSceneMount?: (args: ISceneEventArgs) => void;
     width?: number;
     height?: number;
 }
 
+export interface SceneState {
+    menuContent: JSX.Element;
+}
+
 export class Scene extends React.Component<
-    ISceneProps & React.HTMLAttributes<HTMLCanvasElement>,
-    {}
+    SceneProps & React.HTMLAttributes<HTMLCanvasElement>,
+    SceneState
 > {
     private scene: BABYLON.Scene;
     private engine: BABYLON.Engine;
     private canvas: HTMLCanvasElement;
 
-    public onResizeWindow = () => {
-        if (this.engine) {
-            this.engine.resize();
-        }
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            menuContent: <div />
+        };
+    }
+
+    public setMenuContent = (menuContent: JSX.Element) => {
+        this.setState({ menuContent });
     };
 
     public componentDidMount() {
@@ -41,23 +52,32 @@ export class Scene extends React.Component<
         const scene = new BABYLON.Scene(this.engine);
         this.scene = scene;
 
-        if (typeof this.props.onSceneMount === 'function') {
-            this.props.onSceneMount({
-                canvas: this.canvas,
-                engine: this.engine,
-                scene: this.scene
-            });
-        } else {
-            // console.error('onSceneMount function not available');
-        }
-
         // Resize the babylon engine when the window is resized
         window.addEventListener('resize', this.onResizeWindow);
+    }
+
+    public componentWillReceiveProps(nextProps: SceneProps) {
+        if (nextProps.sceneModel) {
+            nextProps.sceneModel.draw(
+                {
+                    scene: this.scene,
+                    engine: this.engine,
+                    canvas: this.canvas
+                },
+                this.setMenuContent
+            );
+        }
     }
 
     public componentWillUnmount() {
         window.removeEventListener('resize', this.onResizeWindow);
     }
+
+    public onResizeWindow = () => {
+        if (this.engine) {
+            this.engine.resize();
+        }
+    };
 
     public onCanvasLoaded = (c: HTMLCanvasElement) => {
         if (c !== null) {
@@ -77,6 +97,11 @@ export class Scene extends React.Component<
             opts.height = height;
         }
 
-        return <canvas className="Scene" {...opts} ref={this.onCanvasLoaded} />;
+        return (
+            <div>
+                <canvas className="Scene" {...opts} ref={this.onCanvasLoaded} />
+                <MenuContainer menuContent={this.state.menuContent} />
+            </div>
+        );
     }
 }

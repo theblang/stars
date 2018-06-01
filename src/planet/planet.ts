@@ -1,35 +1,35 @@
-import { IMoon, Moon } from '../moon/moon';
+import Serializable from '../common/Serializable';
+import Moon from '../moon/Moon';
+import Position from '../common/Position';
 
-export interface IPlanet {
-    name: string;
-    position: BABYLON.Vector3;
-    radius: number;
-    moons: IMoon[];
-    distanceFromSun: number;
-}
+export default class Planet implements Serializable<Planet> {
+    public name: string;
+    public position: Position;
+    public radius: number;
+    public moons: Moon[];
+    public distanceFromSun: number;
 
-export class Planet {
-    constructor(
-        public name: string,
-        public position: BABYLON.Vector3,
-        public radius: number,
-        public moons: Moon[],
-        public distanceFromSun: number
-    ) {}
+    constructor(planetJson: any) {
+        this.name = planetJson.name;
+        this.position = new Position(planetJson.position);
+        this.radius = planetJson.radius;
+        this.moons = planetJson.moons.map(
+            (moonJson: any) => new Moon(moonJson)
+        );
+        this.distanceFromSun = planetJson.distanceFromSun;
+    }
 
-    // public getInterfaceState() {
-    //     return {
-    //         info: {
-    //             name: this.name,
-    //             description: `This is planet ${this.name}. It is ${this.radius *
-    //                 2} big and ${this.distanceFromSun} distance from the sun`
-    //         },
-    //         // FIXME: Do actual random generation in GeneratorService
-    //         climate: {
-    //             gravity: Math.floor(Math.random() * 101),
-    //             temperature: Math.floor(Math.random() * 101),
-    //             radiation: Math.floor(Math.random() * 101)
-    //         }
-    //     };
-    // }
+    public toJSON() {
+        return {
+            name: this.name,
+            position: {
+                x: this.position.x,
+                y: this.position.y,
+                z: this.position.z
+            },
+            radius: this.radius,
+            moons: this.moons.map(moon => moon.toJSON()),
+            distanceFromSun: this.distanceFromSun
+        };
+    }
 }
