@@ -3,7 +3,7 @@ import Galaxy from './Galaxy';
 import { SceneEventArgs } from '../Scene';
 import { SceneModel } from '../common/SceneModel';
 import System from '../system/System';
-import { GalaxyMenu } from './GalaxyMenu';
+import { FocusedSystemMenu } from './FocusedSystemMenu';
 
 export class GalaxySceneModel implements SceneModel {
     private scene: BABYLON.Scene;
@@ -31,9 +31,7 @@ export class GalaxySceneModel implements SceneModel {
 
         systemMesh.material = material;
 
-        this.setMenuContent(
-            <GalaxyMenu galaxy={this.galaxy} focusedSystem={system} />
-        );
+        this.setMenuContent(<FocusedSystemMenu system={system} />);
     }
 
     public unfocusSystem(system: System, systemMesh: BABYLON.Mesh) {
